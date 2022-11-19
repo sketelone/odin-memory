@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 
 const Container = (props) => {
 
-    const {drivers} = props;
+    const {drivers, handler} = props;
 
     const divStyle = {
         display: 'flex',
@@ -30,7 +30,7 @@ const Container = (props) => {
         <div style={divStyle}>
             {drivers.map((driver) => {               
                 return (
-                    <div key={driver.name} style={cardStyle} id={driver.name}>
+                    <div key={driver.name} style={cardStyle} id={driver.name} onClick={handler}>
                         <img src={driver.src} alt={driver.name} style={imgStyle} id={driver.name}/>
                         <h4 id={driver.name}>{driver.name}</h4>
                     </div>

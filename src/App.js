@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect, useState} from "react";
 import './App.css';
 import Header from "./components/Header";
 import Container from "./components/Container";
@@ -32,52 +32,38 @@ function App() {
     {name: "Zhou", src: require('./assets/zhou.jpg'), clicked: false},  
   ]);
 
-  useEffect(() => {
-    const handleClick = (e) => {
-      console.log("change click")
-      //handle click
-      let nextDrivers = drivers.map(driver => {
-        if (e.target.id === driver.name && driver.clicked === false) {
-          return {
-            ...driver,
-            clicked: true,
-          };
-        } else if (e.target.id === driver.name && driver.clicked === true) {
-          setGameOver(true);
-          return driver;
-        } else {
-          return driver;
+  const handleClick = (e) => {
+    // console.log("change click")
+    //handle click
+    let nextDrivers = drivers.map(driver => {
+      if (e.target.id === driver.name && driver.clicked === false) {
+        return {
+          ...driver,
+          clicked: true,
         };
-      });
+      } else if (e.target.id === driver.name && driver.clicked === true) {
+        setGameOver(true);
+        return driver;
+      } else {
+        return driver;
+      };
+    });
 
-      let currentIndex = nextDrivers.length, randomIndex;
-      while (currentIndex !== 0) {
-        randomIndex = Math.floor(Math.random()*currentIndex);
-        currentIndex--;
+    let currentIndex = nextDrivers.length, randomIndex;
+    while (currentIndex !== 0) {
+      randomIndex = Math.floor(Math.random()*currentIndex);
+      currentIndex--;
 
-        [nextDrivers[currentIndex], nextDrivers[randomIndex]] = [
-          nextDrivers[randomIndex], nextDrivers[currentIndex]];
-      }
-
-      setDrivers(nextDrivers);
+      [nextDrivers[currentIndex], nextDrivers[randomIndex]] = [
+        nextDrivers[randomIndex], nextDrivers[currentIndex]];
     }
 
-    // console.log("add listeners")
-    drivers.forEach(driver => {
-      document.getElementById(driver.name).addEventListener("click", handleClick);
-    })
-
-    return () => {
-      // console.log("remove listeners")
-      drivers.forEach(driver => {
-        document.getElementById(driver.name).addEventListener("click", handleClick);
-      })
-    };
-  },[drivers])
+    setDrivers(nextDrivers);
+  }
 
   useEffect(()=> {
     const incrementScore = () => {
-      console.log("increment score")
+      // console.log("increment score")
       setScore(score + 1);
     }
 
@@ -89,7 +75,6 @@ function App() {
   },[drivers])
 
   useEffect(() => {
-    console.log(gameOver)
     //check if game is over
     if(gameOver) {
       newHighScore();
@@ -109,11 +94,9 @@ function App() {
     }
   },)
 
-
-
   const newHighScore = () => {
     if(score > highScore) {
-      console.log("set high score")
+      // console.log("set high score")
       setHighScore(score);
     }
   }
@@ -121,7 +104,7 @@ function App() {
   return (
     <div className="App">
       <Header score={score} highScore={highScore}/>
-      <Container drivers = {drivers}/>
+      <Container drivers = {drivers} handler = {handleClick}/>
     </div>
   );
 }
