@@ -8,6 +8,7 @@ function App() {
 
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
   const [drivers, setDrivers] = useState([
     {name: "Albono", src: require('./assets/albono.jpg'), clicked: false},
     {name: "Alonso", src: require('./assets/alonso.jpg'), clicked: false},
@@ -31,21 +32,18 @@ function App() {
     {name: "Zhou", src: require('./assets/zhou.jpg'), clicked: false},  
   ]);
 
-  let gameOver = false;
-
   useEffect(() => {
     const handleClick = (e) => {
       console.log("change click")
       //handle click
       let nextDrivers = drivers.map(driver => {
         if (e.target.id === driver.name && driver.clicked === false) {
-          // incrementScore();
           return {
             ...driver,
             clicked: true,
           };
         } else if (e.target.id === driver.name && driver.clicked === true) {
-          gameOver = true;
+          setGameOver(true);
           return driver;
         } else {
           return driver;
@@ -59,23 +57,6 @@ function App() {
 
         [nextDrivers[currentIndex], nextDrivers[randomIndex]] = [
           nextDrivers[randomIndex], nextDrivers[currentIndex]];
-      }
-
-      //check if game is over
-      if(gameOver) {
-        newHighScore();
-        setScore(0);
-        gameOver = false;
-        nextDrivers = drivers.map(driver => {
-          if (driver.clicked === true) {
-            return {
-              ...driver,
-              clicked: false,
-            };
-          } else {
-            return driver;
-          };
-        });
       }
 
       setDrivers(nextDrivers);
@@ -92,9 +73,14 @@ function App() {
         document.getElementById(driver.name).addEventListener("click", handleClick);
       })
     };
-  },[score])
+  },[drivers])
 
   useEffect(()=> {
+    const incrementScore = () => {
+      console.log("increment score")
+      setScore(score + 1);
+    }
+
     for (var i=0; i<drivers.length; i++) {
       if (drivers[i].clicked === true) {
         incrementScore();
@@ -102,10 +88,28 @@ function App() {
     }
   },[drivers])
 
-  const incrementScore = () => {
-    console.log("increment score")
-    setScore(score + 1);
-  }
+  useEffect(() => {
+    console.log(gameOver)
+    //check if game is over
+    if(gameOver) {
+      newHighScore();
+      setScore(0);
+      setGameOver(()=>false);
+      let nextDrivers = drivers.map(driver => {
+        if (driver.clicked === true) {
+          return {
+            ...driver,
+            clicked: false,
+          };
+        } else {
+          return driver;
+        };
+      });
+      setDrivers(nextDrivers);
+    }
+  },)
+
+
 
   const newHighScore = () => {
     if(score > highScore) {
